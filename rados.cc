@@ -129,20 +129,18 @@ NAN_METHOD(Rados::New) {
   if (!args.IsConstructCall()) {
     return NanThrowError("Rados object must be instantiated with 'new' statement");
   }
-  if (args.Length() < 3 ||
+  if (args.Length() < 2 ||
       !args[0]->IsString() ||
-      !args[1]->IsString() ||
-      !args[2]->IsString()) {
+      !args[1]->IsString()) {
     return NanThrowError("Bad argument.");
   }
 
   Rados* obj = new Rados();
   String::Utf8Value cluster_name(args[0]);
-  String::Utf8Value user_name(args[1]);
-  String::Utf8Value conffile(args[2]);
+  String::Utf8Value conffile(args[1]);
   uint64_t flags = 0;
 
-  if ( rados_create2(&obj->cluster, *cluster_name, *user_name, flags) != 0 ) {
+  if ( rados_create(&obj->cluster, *cluster_name) != 0 ) {
     return NanThrowError("create rados cluster failed");
   }
   obj->state = STATE_CREATED;
